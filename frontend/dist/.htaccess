@@ -53,21 +53,26 @@
   </FilesMatch>
 </IfModule>
 
-# ── React Router SPA — all routes → index.html ───────────────────────────────
+# ── Passenger Node.js App (cPanel) ──────────────────────────────────────────
+# Passenger handles all non-static requests (both /api/* and React SPA routes).
+# This is required because Passenger assigns a dynamic port — proxying to a
+# hardcoded localhost:5000 does NOT work.
+PassengerAppRoot /home/batlamed/batla-medicos
+PassengerNodejs /home/batlamed/nodevenv/batla-medicos/24/bin/node
+PassengerAppType node
+PassengerStartupFile app.js
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
 
-  # Proxy /api/* to Node.js backend on port 5000
-  RewriteCond %{REQUEST_URI} ^/api/ [NC]
-  RewriteRule ^api/(.*)$ http://localhost:5000/api/$1 [P,L,QSA]
+  # Serve existing static files/dirs directly (JS, CSS, images, etc.)
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
 
-  # Don't rewrite existing files or directories
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-
-  # Send everything else to index.html
-  RewriteRule ^ index.html [QSA,L]
+  # Everything else (including /api/* and React routes) → Passenger → Express
+  RewriteRule ^ app.js [QSA,L]
 </IfModule>
 
 # ── Force UTF-8 for all text/HTML/JS/CSS ─────────────────────────────────────
