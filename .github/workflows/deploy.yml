@@ -8,15 +8,19 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger deploy webhook
-        env:
-          DEPLOY_SECRET: ${{ secrets.DEPLOY_SECRET }}
-        run: |
-          BODY='{"deploy":true}'
-          SIG="sha256=$(echo -n "$BODY" | openssl dgst -sha256 -hmac "$DEPLOY_SECRET" | awk '{print $NF}')"
-          curl -s -X POST https://www.batlamedicos.shop/api/deploy \
-            -H "Content-Type: application/json" \
-            -H "X-Deploy-Signature: $SIG" \
-            -d "$BODY" \
-            --max-time 60 \
-            -w "\nHTTP Status: %{http_code}\n"
+      - name: Deploy via SSH to cPanel
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASS }}
+          port: 22
+          script: |
+            export PATH=/home/batlamed/nodevenv/batla-medicos/24/bin:$PATH
+            cd /home/batlamed/batla-medicos
+            git fetch origin master
+            git reset --hard origin/master
+            cd backend && npm install --production
+            mkdir -p /home/batlamed/batla-medicos/tmp
+            touch /home/batlamed/batla-medicos/tmp/restart.txt
+            echo "Deploy complete at $(date)"
