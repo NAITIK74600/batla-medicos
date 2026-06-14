@@ -1,0 +1,97 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# Batla Medicos — .htaccess  (Apache / cPanel)
+# ══════════════════════════════════════════════════════════════════════════════
+
+# ── GZIP / Brotli compression ─────────────────────────────────────────────────
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE application/xml application/xhtml+xml
+  AddOutputFilterByType DEFLATE application/rss+xml application/atom+xml
+  AddOutputFilterByType DEFLATE image/svg+xml font/ttf font/otf
+  AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+</IfModule>
+
+# ── Browser caching (improves Core Web Vitals → higher crawl priority) ────────
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault                          "access plus 1 month"
+  ExpiresByType text/html                 "access plus 0 seconds"
+  ExpiresByType text/css                  "access plus 1 year"
+  ExpiresByType application/javascript    "access plus 1 year"
+  ExpiresByType image/jpeg                "access plus 1 year"
+  ExpiresByType image/png                 "access plus 1 year"
+  ExpiresByType image/gif                 "access plus 1 year"
+  ExpiresByType image/webp                "access plus 1 year"
+  ExpiresByType image/svg+xml             "access plus 1 year"
+  ExpiresByType image/x-icon              "access plus 1 year"
+  ExpiresByType font/woff2                "access plus 1 year"
+  ExpiresByType font/woff                 "access plus 1 year"
+  ExpiresByType font/ttf                  "access plus 1 year"
+  ExpiresByType application/json          "access plus 0 seconds"
+  ExpiresByType application/xml           "access plus 0 seconds"
+  ExpiresByType text/xml                  "access plus 0 seconds"
+</IfModule>
+
+# ── Cache-Control headers ─────────────────────────────────────────────────────
+<IfModule mod_headers.c>
+  # HTML — never cache (SPA entry point)
+  <FilesMatch "\.(html)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires 0
+  </FilesMatch>
+
+  # Hashed assets (JS/CSS with content hash in filename) — immutable
+  <FilesMatch "\.(js|css)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # Images and fonts — long cache
+  <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico|woff2|woff|ttf|eot)$">
+    Header set Cache-Control "public, max-age=31536000"
+  </FilesMatch>
+</IfModule>
+
+# ── React Router SPA — all routes → index.html ───────────────────────────────
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Proxy /api/* to Node.js backend on port 5000
+  RewriteCond %{REQUEST_URI} ^/api/ [NC]
+  RewriteRule ^api/(.*)$ http://localhost:5000/api/$1 [P,L,QSA]
+
+  # Don't rewrite existing files or directories
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+
+  # Send everything else to index.html
+  RewriteRule ^ index.html [QSA,L]
+</IfModule>
+
+# ── Force UTF-8 for all text/HTML/JS/CSS ─────────────────────────────────────
+AddDefaultCharset UTF-8
+
+<IfModule mod_mime.c>
+  AddCharset UTF-8 .html .htm .js .jsx .css .json .svg .txt
+  AddType application/javascript;charset=UTF-8 .js
+  AddType text/css;charset=UTF-8 .css
+  AddType text/html;charset=UTF-8 .html
+</IfModule>
+
+# ── Security headers ──────────────────────────────────────────────────────────
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  # Remove any existing Permissions-Policy (including server/vhost level)
+  Header always unset Permissions-Policy
+  Header unset Permissions-Policy
+  # Re-set with geolocation allowed. Also use Header edit to overwrite
+  # any value a higher-level 'always' directive may have already written.
+  Header always set Permissions-Policy "geolocation=*, camera=(), microphone=()"
+  Header edit Permissions-Policy "geolocation=[^,;]*" "geolocation=*"
+  Header always edit Permissions-Policy "geolocation=[^,;]*" "geolocation=*"
+</IfModule>

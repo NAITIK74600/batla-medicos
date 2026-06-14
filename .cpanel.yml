@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export PATH=/home/batlamed/nodevenv/batla-medicos/24/bin:$PATH && cd /home/batlamed/batla-medicos/backend && npm install --production
+    - mkdir -p /home/batlamed/batla-medicos/tmp && touch /home/batlamed/batla-medicos/tmp/restart.txt

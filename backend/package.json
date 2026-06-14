@@ -1,0 +1,50 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed:superadmin": "node scripts/seedSuperAdmin.js",
+    "seed:categories": "node scripts/seedCategories.js",
+    "seed:products": "node scripts/seedProducts.js",
+    "seed:excel:reset": "node scripts/resetDbFromExcel.js",
+    "seed:mysql:reset": "node scripts/resetMySqlFromExcel.js",
+    "seed:more": "node scripts/seedMoreProducts.js",
+    "seed:images": "node scripts/addProductImages.js",
+    "upload:images": "node scripts/uploadProductImages.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@google/generative-ai": "latest",
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.9.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "crypto": "^1.0.1",
+    "csv-parse": "^6.1.0",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.3.1",
+    "express-validator": "^7.3.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.1.1",
+    "mysql2": "^3.20.0",
+    "nodemailer": "^8.0.2",
+    "pdfkit": "^0.18.0",
+    "razorpay": "^2.9.6",
+    "twilio": "^5.13.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

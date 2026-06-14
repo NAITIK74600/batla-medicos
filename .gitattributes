@@ -1,0 +1,17 @@
+# Force LF for cPanel deployment file
+.cpanel.yml text eol=lf
+
+# Force LF for all text files to prevent dirty repo on Linux servers
+* text=auto eol=lf
+
+# Binary files — no line ending conversion
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary

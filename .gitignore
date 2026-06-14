@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+package-lock.json
+**/package-lock.json
+
+# Environment secrets
+.env
+.env.local
+.env.production
+.env.development
+.env.development.local
+.env.production.local
+.env.*.local
+
+# Build output
+backend/dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Passenger restart
+tmp/
+/tmp/
+
+# cPanel runtime folders
+/public/
+/node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Uploads (local only)
+backend/uploads/
+
+# Local Netlify folder
+.netlify

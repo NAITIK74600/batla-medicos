@@ -1,0 +1,22 @@
+# robots.txt — batlamedicos.shop
+# Allow all crawlers to index public pages
+
+User-agent: *
+Allow: /
+
+# ── Private / auth-gated pages — do not index ──────────────────────────────
+Disallow: /admin
+Disallow: /account
+Disallow: /orders
+Disallow: /checkout
+Disallow: /prescriptions
+Disallow: /notifications
+Disallow: /lab/bookings
+Disallow: /delivery
+Disallow: /reminders
+
+# ── API & internal routes ──────────────────────────────────────────────────
+Disallow: /api/
+
+# ── Sitemap location ───────────────────────────────────────────────────────
+Sitemap: https://www.batlamedicos.shop/sitemap.xml

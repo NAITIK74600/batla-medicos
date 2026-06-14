@@ -1,0 +1,22 @@
+name: Deploy to cPanel
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger deploy webhook
+        env:
+          DEPLOY_SECRET: ${{ secrets.DEPLOY_SECRET }}
+        run: |
+          BODY='{"deploy":true}'
+          SIG="sha256=$(echo -n "$BODY" | openssl dgst -sha256 -hmac "$DEPLOY_SECRET" | awk '{print $NF}')"
+          curl -s -X POST https://www.batlamedicos.shop/api/deploy \
+            -H "Content-Type: application/json" \
+            -H "X-Deploy-Signature: $SIG" \
+            -d "$BODY" \
+            --max-time 60 \
+            -w "\nHTTP Status: %{http_code}\n"
